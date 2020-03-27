@@ -32,6 +32,7 @@
     NSMutableDictionary *_codecOptions;
     NSMutableDictionary *_swsOptions;
     NSMutableDictionary *_swrOptions;
+    NSMutableDictionary *_avioOptions;
 }
 
 + (IJKFFOptions *)optionsByDefault
@@ -63,6 +64,7 @@
         _codecOptions       = [[NSMutableDictionary alloc] init];
         _swsOptions         = [[NSMutableDictionary alloc] init];
         _swrOptions         = [[NSMutableDictionary alloc] init];
+        _avioOptions        = [[NSMutableDictionary alloc] init];
 
         _optionCategories   = [[NSMutableDictionary alloc] init];
         _optionCategories[@(IJKMP_OPT_CATEGORY_PLAYER)] = _playerOptions;
@@ -70,6 +72,7 @@
         _optionCategories[@(IJKMP_OPT_CATEGORY_CODEC)]  = _codecOptions;
         _optionCategories[@(IJKMP_OPT_CATEGORY_SWS)]    = _swsOptions;
         _optionCategories[@(IJKMP_OPT_CATEGORY_SWR)]    = _swrOptions;
+        _optionCategories[@(IJKMP_OPT_CATEGORY_AVIO)]   = _avioOptions;
     }
     return self;
 }
@@ -146,6 +149,11 @@
     [self setOptionValue:value forKey:key ofCategory:kIJKFFOptionCategoryPlayer];
 }
 
+-(void)setAvioOptionValue:(NSString *)value forKey:(NSString *)key
+{
+	[self setOptionValue:value forKey:key ofCategory:kIJKFFOptionCategoryAvio];
+}
+
 -(void)setFormatOptionIntValue:(int64_t)value forKey:(NSString *)key
 {
     [self setOptionIntValue:value forKey:key ofCategory:kIJKFFOptionCategoryFormat];
@@ -164,6 +172,16 @@
 -(void)setPlayerOptionIntValue:(int64_t)value forKey:(NSString *)key
 {
     [self setOptionIntValue:value forKey:key ofCategory:kIJKFFOptionCategoryPlayer];
+}
+
+-(void)setAvioOptionIntValue:(int64_t)value forKey:(NSString *)key
+{
+	[self setOptionIntValue:value forKey:key ofCategory:kIJKFFOptionCategoryAvio];
+}
+
+-(void)setAvioOptionPtrValue:(void*)value forKey:(NSString *)key
+{
+	[self setAvioOptionIntValue:(int64_t)value forKey:key];
 }
 
 @end

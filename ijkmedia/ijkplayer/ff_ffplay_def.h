@@ -116,7 +116,8 @@
 
 /* external clock speed adjustment constants for realtime sources based on buffer fullness */
 #define EXTERNAL_CLOCK_SPEED_MIN  0.900
-#define EXTERNAL_CLOCK_SPEED_MAX  1.010
+//#define EXTERNAL_CLOCK_SPEED_MAX  1.010
+#define EXTERNAL_CLOCK_SPEED_MAX  2.010
 #define EXTERNAL_CLOCK_SPEED_STEP 0.001
 
 /* we use about AUDIO_DIFF_AVG_NB A-V differences to make the average */
@@ -565,6 +566,7 @@ typedef struct FFPlayer {
     AVDictionary *player_opts;
     AVDictionary *swr_opts;
     AVDictionary *swr_preset_opts;
+    AVDictionary *avio_opts;
 
     /* ffplay options specified by the user */
 #ifdef FFP_MERGE
@@ -737,6 +739,7 @@ inline static void ffp_reset_internal(FFPlayer *ffp)
     av_dict_free(&ffp->player_opts);
     av_dict_free(&ffp->swr_opts);
     av_dict_free(&ffp->swr_preset_opts);
+    av_dict_free(&ffp->avio_opts);
 
     /* ffplay options specified by the user */
     av_freep(&ffp->input_filename);

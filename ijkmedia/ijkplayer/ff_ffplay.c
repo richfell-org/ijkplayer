@@ -103,6 +103,8 @@
 
 #define FFP_BUF_MSG_PERIOD (3)
 
+#define FFP_AVIO_BUFSZ_DEFAULT		32768
+
 // static const AVOption ffp_context_options[] = ...
 #include "ff_ffplay_options.h"
 
@@ -3096,6 +3098,37 @@ static int read_thread(void *arg)
         ret = AVERROR(ENOMEM);
         goto fail;
     }
+
+	if(ffp->avio_opts != NULL)
+	{
+		int		(*io_read) (void*, uint8_t*, int) = NULL;
+		int		(*io_write)(void*, uint8_t*, int) = NULL;
+		int64_t	(*io_seek) (void*, int64_t, int) = NULL;
+
+		int io_bufsz = FFP_AVIO_BUFSZ_DEFAULT;
+		void *opaque = NULL;
+
+		if((t = av_dict_get(ffp->avio_opts, "IO_BUFFER_SIZE", NULL, AV_DICT_MATCH_CASE)))
+			io_bufsz = (int)strtol(t->value, NULL, 0);
+
+		if((t = av_dict_get(ffp->avio_opts, "IO_READ", NULL, AV_DICT_MATCH_CASE)))
+			io_read = (int (*)(void*, uint8_t*, int))strtoul(t->value, NULL, 0);
+
+		if((t = av_dict_get(ffp->avio_opts, "IO_SEEK", NULL, AV_DICT_MATCH_CASE)))
+			io_seek = (int64_t (*)(void*, int64_t, int))strtoul(t->value, NULL, 0);
+
+		if((t = av_dict_get(ffp->avio_opts, "IO_WRITE", NULL, AV_DICT_MATCH_CASE)))
+			io_write = (int (*)(void*, uint8_t*, int))strtoul(t->value, NULL, 0);
+
+		if((t = av_dict_get(ffp->avio_opts, "IO_DATA", NULL, AV_DICT_MATCH_CASE)))
+			opaque = (void*)strtoul(t->value, NULL, 0);
+
+		ic->pb = avio_alloc_context(av_malloc(io_bufsz), io_bufsz, (io_write != NULL), opaque, io_read, io_write, io_seek);
+		ic->flags |= AVFMT_FLAG_CUSTOM_IO;
+
+		t = NULL;
+	}
+
     ic->interrupt_callback.callback = decode_interrupt_cb;
     ic->interrupt_callback.opaque = is;
     if (!av_dict_get(ffp->format_opts, "scan_all_pmts", NULL, AV_DICT_MATCH_CASE)) {
@@ -4043,6 +4076,7 @@ static AVDictionary **ffp_get_opt_dict(FFPlayer *ffp, int opt_category)
         case FFP_OPT_CATEGORY_SWS:      return &ffp->sws_dict;
         case FFP_OPT_CATEGORY_PLAYER:   return &ffp->player_opts;
         case FFP_OPT_CATEGORY_SWR:      return &ffp->swr_opts;
+        case FFP_OPT_CATEGORY_AVIO:		return &ffp->avio_opts;
         default:
             av_log(ffp, AV_LOG_ERROR, "unknown option category %d\n", opt_category);
             return NULL;
@@ -4282,6 +4316,7 @@ int ffp_prepare_async_l(FFPlayer *ffp, const char *file_name)
     ffp_show_dict(ffp, "codec-opts ", ffp->codec_opts);
     ffp_show_dict(ffp, "sws-opts   ", ffp->sws_dict);
     ffp_show_dict(ffp, "swr-opts   ", ffp->swr_opts);
+    ffp_show_dict(ffp, "avio-opts  ", ffp->avio_opts);
     av_log(NULL, AV_LOG_INFO, "===================\n");
 
     av_opt_set_dict(ffp, &ffp->player_opts);

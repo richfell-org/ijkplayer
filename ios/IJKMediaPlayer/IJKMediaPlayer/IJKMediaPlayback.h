@@ -50,7 +50,9 @@ typedef NS_OPTIONS(NSUInteger, IJKMPMovieLoadState) {
 typedef NS_ENUM(NSInteger, IJKMPMovieFinishReason) {
     IJKMPMovieFinishReasonPlaybackEnded,
     IJKMPMovieFinishReasonPlaybackError,
-    IJKMPMovieFinishReasonUserExited
+    IJKMPMovieFinishReasonUserExited,
+    IJKMPMovieFinishReasonShutdown
+	
 };
 
 // -----------------------------------------------------------------------------

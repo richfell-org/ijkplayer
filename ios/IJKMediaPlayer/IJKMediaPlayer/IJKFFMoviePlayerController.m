@@ -604,6 +604,12 @@ inline static int getPlayerOption(IJKFFOptionCategory category)
 
 - (void)didShutdown
 {
+	[[NSNotificationCenter defaultCenter]
+		postNotificationName:IJKMPMoviePlayerPlaybackDidFinishNotification
+		object:self
+		userInfo:@{
+			IJKMPMoviePlayerPlaybackDidFinishReasonUserInfoKey : @(IJKMPMovieFinishReasonShutdown)
+		}];
 }
 
 - (IJKMPMoviePlaybackState)playbackState
@@ -995,6 +1001,18 @@ inline static NSString *formatedSpeed(int64_t bytes, int64_t elapsed_milli) {
     if (!_mediaPlayer)
         return 0;
     return ijkmp_get_property_float(_mediaPlayer, FFP_PROP_FLOAT_DROP_FRAME_RATE, 0.0f);
+}
+
+- (void)deactivateStream:(int)stream
+{
+	if(_mediaPlayer)
+		ijkmp_set_stream_selected(_mediaPlayer, stream, 0);
+}
+
+- (void)activateStream:(int)stream
+{
+	if(_mediaPlayer)
+		ijkmp_set_stream_selected(_mediaPlayer, stream, 1);
 }
 
 inline static void fillMetaInternal(NSMutableDictionary *meta, IjkMediaMeta *rawMeta, const char *name, NSString *defaultValue)

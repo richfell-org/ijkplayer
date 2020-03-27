@@ -29,6 +29,7 @@ typedef enum IJKFFOptionCategory {
     kIJKFFOptionCategorySws    = 3,
     kIJKFFOptionCategoryPlayer = 4,
     kIJKFFOptionCategorySwr    = 5,
+    kIJKFFOptionCategoryAvio   = 6,
 } IJKFFOptionCategory;
 
 // for codec option 'skip_loop_filter' and 'skip_frame'
@@ -64,11 +65,15 @@ struct IjkMediaPlayer;
 -(void)setCodecOptionValue:        (NSString *)value forKey:(NSString *)key;
 -(void)setSwsOptionValue:          (NSString *)value forKey:(NSString *)key;
 -(void)setPlayerOptionValue:       (NSString *)value forKey:(NSString *)key;
+-(void)setAvioOptionValue:         (NSString *)value forKey:(NSString *)key;
 
 -(void)setFormatOptionIntValue:    (int64_t)value forKey:(NSString *)key;
 -(void)setCodecOptionIntValue:     (int64_t)value forKey:(NSString *)key;
 -(void)setSwsOptionIntValue:       (int64_t)value forKey:(NSString *)key;
 -(void)setPlayerOptionIntValue:    (int64_t)value forKey:(NSString *)key;
+-(void)setAvioOptionIntValue:      (int64_t)value forKey:(NSString *)key;
+
+-(void)setAvioOptionPtrValue:      (void*)value forKey:(NSString *)key;
 
 @property(nonatomic) BOOL showHudView;
 
